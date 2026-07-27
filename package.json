@@ -1,0 +1,25 @@
+{
+  "name": "douyin-collect",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "edge": "node scripts/launch-edge.mjs --kill",
+    "collect:search": "node scripts/collect-search.mjs",
+    "collect:details": "node scripts/collect-details.mjs",
+    "manifest": "node scripts/build-manifest.mjs",
+    "frames": "node scripts/extract-frames.mjs",
+    "validate": "node scripts/validate-output.mjs",
+    "pipeline": "node scripts/run-pipeline.mjs",
+    "daily:top10": "node scripts/daily-top10.mjs",
+    "ops:report": "node scripts/build-ops-report.mjs",
+    "daily:brief": "node scripts/build-daily-brief.mjs",
+    "repair:media": "node scripts/rebuild-from-media.mjs",
+    "doubao:45-prompt": "node scripts/make-doubao-45-prompt.mjs",
+    "doubao:selfie-bg-prompt": "node scripts/make-doubao-selfie-bg-prompt.mjs",
+    "brand:model-prompt": "node scripts/make-brand-model-prompt.mjs",
+    "content:job": "node scripts/content-job.mjs"
+  },
+  "dependencies": {
+    "ws": "^8.21.1"
+  }
+}

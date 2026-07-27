@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# Environment / secrets
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*cookie*
+*token*
+*secret*
+
+# Local browser / session state
+.chrome-profile/
+chrome-profile/
+user-data-dir/
+playwright-report/
+
+# Generated outputs and downloaded media
+outputs/
+output/
+downloads/
+media/
+tmp/
+temp/
+*.mp4
+*.mov
+*.m4v
+*.avi
+*.webm
+*.mp3
+*.wav
+
+# Logs / caches
+*.log
+npm-debug.log*
+.cache/
+.tmp/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
