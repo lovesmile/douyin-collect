@@ -111,11 +111,13 @@ npm run ecommerce:top10
 npm run ecommerce:top10 -- --keyword "育儿书推荐,童书带货,亲子阅读" --duration 30
 ```
 
-生成某个商品的豆包 10 秒分段视频提示词：
+生成某个商品的豆包 10 秒分段视频提示词。书籍带货默认建议 60 秒；30 秒只适合讲一个钩子和一个卖点：
 
 ```powershell
-npm run ecommerce:segments -- --product "某本书名" --audience "想自我提升但不知道从哪开始的人" --duration 30
+npm run ecommerce:segments -- --product "某本书名" --audience "想自我提升但不知道从哪开始的人" --duration 60 --sellingPoint "只讲一个具体卖点"
 ```
+
+生成时优先提供真实书封、商品详情页截图或商品卡截图。每段画面都要保留书名/封面/书脊/商品卡截图/中文卖点便签等商品锚点，避免出现“画面好看但和书没关系”。不要让 AI 随机生成英文内页；没有真实内页素材时，用中文关键词便签替代，或让书页模糊不可读。
 
 输出结构：
 

@@ -95,16 +95,27 @@ outputs/ecommerce/daily-top10/YYYY-MM-DD
 
 ## 三、生成某个商品的 10 秒分段提示词
 
-豆包视频只能生成 10 秒，所以长视频按 10 秒分段：
+豆包视频只能生成 10 秒，所以长视频按 10 秒分段。书籍带货默认建议做 60 秒：30 秒只适合讲一个钩子和一个卖点，不适合讲清一本书。
+
+正式生成前，尽量准备至少一种真实商品锚点：
+
+- 真实书封照片
+- 商品详情页截图
+- 商品卡截图
+- 你自己整理的中文卖点便签
+
+每段画面都必须保留书名/封面/书脊/商品卡截图/中文卖点便签中的至少一种。不要只生成好看的书桌、咖啡、翻书氛围，否则配音一上去就会有“货不对板”的感觉。
+
+不要让 AI 随机生成英文内页、英文书名或外文段落。没有真实内页素材时，用中文目录便签/中文关键词卡替代；如果必须翻书，书页内容要模糊不可读。
 
 ```powershell
-npm run ecommerce:segments -- --product "某本书名" --audience "想自我提升但不知道从哪开始的人" --duration 30
+npm run ecommerce:segments -- --product "某本书名" --audience "想自我提升但不知道从哪开始的人" --duration 60 --sellingPoint "只讲一个具体卖点"
 ```
 
-60 秒：
+如果只做 30 秒：
 
 ```powershell
-npm run ecommerce:segments -- --product "某本书名" --audience "新手爸妈" --duration 60
+npm run ecommerce:segments -- --product "某本书名" --audience "新手爸妈" --duration 30 --sellingPoint "只讲一个具体卖点"
 ```
 
 输出：
@@ -179,7 +190,7 @@ outputs/ecommerce/daily-top10/YYYY-MM-DD/ecommerce-content-plan.md
 确定今天要带的书之后：
 
 ```powershell
-npm run ecommerce:segments -- --product "书名" --audience "目标人群" --duration 30
+npm run ecommerce:segments -- --product "书名" --audience "目标人群" --duration 60 --sellingPoint "只讲一个具体卖点"
 ```
 
 最后按 `segments` 目录里的提示词，去豆包分 3 次生成 10 秒视频，再按 `stitching-guide.md` 拼接。
