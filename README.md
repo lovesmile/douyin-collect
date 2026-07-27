@@ -20,7 +20,8 @@
 7. 视频自动抽首、中、尾 3 张关键帧。
 8. 校验样本完整性。
 9. 生成穿戴甲账号运营方案。
-10. 支持每天采集热门 TOP10，并生成当天可执行的内容制作方案。
+10. 支持每天采集热门 TOP5，并生成当天可执行的内容制作方案。
+11. 筛选完成后自动删除未入选的下载目录，避免长期占用磁盘空间。
 
 默认筛选规则：
 
@@ -47,11 +48,13 @@ npm run edge
 npm run pipeline -- --keyword "穿戴甲,显白美甲,猫眼穿戴甲,短甲穿戴甲,新中式穿戴甲" --out "C:\Users\10385\Projects\wo\outputs\collect\2026-07-26-wearable-nail" --target 150 --limit 80
 ```
 
-## 每日热门 TOP10
+## 每日热门 TOP5
 
 ```powershell
 npm run daily:top10
 ```
+
+命令名保留 `daily:top10` 是为了兼容旧习惯；默认实际筛选 TOP5。若临时想要更多，可传 `--limit 10`。
 
 默认输出到：
 
@@ -73,7 +76,7 @@ daily-content-plan.md
 
 这份文件会直接给出当天建议拍摄的 3 条视频、1 组图文、每条的镜头脚本、首帧字幕、标题备选、标签、AI 图文提示词和发布顺序。
 
-## 带货模块：书本/书单 TOP10
+## 带货模块：书本/书单 TOP5
 
 带货模块独立输出到：
 
@@ -86,6 +89,8 @@ C:\Users\10385\Projects\wo\outputs\ecommerce
 ```powershell
 npm run ecommerce:top10
 ```
+
+命令名保留 `ecommerce:top10`，默认实际筛选 TOP5，并在筛选后删除未入选的数字内容目录。
 
 指定关键词：
 
@@ -140,7 +145,13 @@ npm run collect:details -- --in "..\outputs\collect\run-001\candidates.json" --o
 生成清单和逐条拆解：
 
 ```powershell
-npm run manifest -- --out "..\outputs\collect\run-001" --limit 50 --min-likes 1000 --max-followers 50000 --days 90
+npm run manifest -- --out "..\outputs\collect\run-001" --limit 5 --min-likes 1000 --max-followers 50000 --days 90
+```
+
+清理未入选下载目录：
+
+```powershell
+npm run cleanup:unselected -- --out "..\outputs\collect\run-001"
 ```
 
 抽关键帧：

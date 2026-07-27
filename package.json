@@ -7,6 +7,7 @@
     "collect:search": "node scripts/collect-search.mjs",
     "collect:details": "node scripts/collect-details.mjs",
     "manifest": "node scripts/build-manifest.mjs",
+    "cleanup:unselected": "node scripts/cleanup-unselected.mjs",
     "frames": "node scripts/extract-frames.mjs",
     "validate": "node scripts/validate-output.mjs",
     "pipeline": "node scripts/run-pipeline.mjs",

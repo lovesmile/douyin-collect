@@ -7,7 +7,7 @@ const date = args.date || todaySlug();
 const keyword = args.keyword || '穿戴甲,显白美甲,猫眼穿戴甲,短甲穿戴甲,夏日美甲,新中式穿戴甲';
 const outDir = path.resolve(args.out || args.output || path.join('..', 'outputs', 'collect', 'daily-top10', date));
 const candidates = path.join(outDir, 'candidates.json');
-const limit = Number(args.limit || 10);
+const limit = Number(args.limit || 5);
 const strictDays = Number(args.days || 3);
 const fallbackDays = Number(args['fallback-days'] || 30);
 
@@ -40,6 +40,7 @@ if (selected < limit && fallbackDays > strictDays) {
   selectedWindow = fallbackDays;
 }
 
+await run('scripts/cleanup-unselected.mjs', ['--out', outDir]);
 await run('scripts/extract-frames.mjs', ['--out', outDir]);
 await run('scripts/validate-output.mjs', ['--out', outDir, '--expected', String(Math.min(limit, selected)), '--warn-only']);
 await run('scripts/build-ops-report.mjs', ['--out', outDir]);

@@ -38,11 +38,19 @@ C:\Users\10385\Projects\wo\outputs\collect\daily-top10
 别急着买，先看目录是不是你需要的。
 ```
 
-## 二、每日采集书本带货 TOP10
+## 二、每日采集书本带货 TOP5
 
 ```powershell
 cd C:\Users\10385\Projects\wo\douyin-collect
 npm run ecommerce:top10
+```
+
+命令名保留 `ecommerce:top10`，但默认实际只筛选 TOP5。筛选完成后会自动删除未入选的数字内容目录，避免下载的视频/音频长期占用空间。
+
+如果临时需要 TOP10：
+
+```powershell
+npm run ecommerce:top10 -- --limit 10
 ```
 
 默认关键词：
@@ -63,8 +71,8 @@ npm run ecommerce:top10 -- --keyword "育儿书推荐,童书带货,亲子阅读"
 outputs/ecommerce/daily-top10/YYYY-MM-DD
 ├─ manifest.csv
 ├─ ecommerce-content-plan.md
-├─ 每条内容的视频/图文/音频/关键帧
-└─ 每条内容的 video-info.txt / analysis.txt
+├─ 入选内容的视频/图文/音频/关键帧
+└─ 入选内容的 video-info.txt / analysis.txt
 ```
 
 ## 三、生成某个商品的 10 秒分段提示词
@@ -147,6 +155,8 @@ npm run ecommerce:top10 -- --keyword "书单推荐,好书推荐,图书带货"
 ```text
 outputs/ecommerce/daily-top10/YYYY-MM-DD/ecommerce-content-plan.md
 ```
+
+默认只保留 TOP5 入选目录；未入选下载会被清理，`candidates.json`、`details.json`、`manifest.csv` 和方案文档会保留。
 
 确定今天要带的书之后：
 

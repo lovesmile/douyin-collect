@@ -40,7 +40,7 @@ function buildPlan(items) {
     `- 目标商品：${product}`,
     `- 目标人群：${audience}`,
     '',
-    '## 今日对标 TOP10',
+    `## 今日对标 TOP${top.length}`,
     '',
     buildReferenceTable(top),
     '',
