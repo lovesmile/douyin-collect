@@ -1,6 +1,11 @@
 # Douyin Collect Pipeline
 
-这是一套可复用的抖音穿戴甲素材采集、下载、筛选、拆解和账号运营分析流水线。目标不是单纯存视频，而是把爆款内容拆成你自己的账号可以复拍、复测、复用的内容资产。
+这是一套可复用的抖音内容采集、下载、筛选、拆解和生成方案流水线。当前包含两个互相独立的模块：
+
+- 穿戴甲账号内容模块：采集穿戴甲热门内容，生成每日拍摄/AI 图文方案。
+- 带货内容模块：先从书本/书单/教辅类目开始，采集热门带货视频，拆解后生成原创达人带货脚本、豆包 10 秒分段视频提示词和合规检查。
+
+目标不是单纯存视频，也不是搬运复刻，而是把爆款内容拆成你自己的账号可以复拍、复测、复用的内容资产。
 
 ## 能力
 
@@ -67,6 +72,56 @@ daily-content-plan.md
 ```
 
 这份文件会直接给出当天建议拍摄的 3 条视频、1 组图文、每条的镜头脚本、首帧字幕、标题备选、标签、AI 图文提示词和发布顺序。
+
+## 带货模块：书本/书单 TOP10
+
+带货模块独立输出到：
+
+```text
+C:\Users\10385\Projects\wo\outputs\ecommerce
+```
+
+采集书本/书单带货对标：
+
+```powershell
+npm run ecommerce:top10
+```
+
+指定关键词：
+
+```powershell
+npm run ecommerce:top10 -- --keyword "育儿书推荐,童书带货,亲子阅读" --duration 30
+```
+
+生成某个商品的豆包 10 秒分段视频提示词：
+
+```powershell
+npm run ecommerce:segments -- --product "某本书名" --audience "想自我提升但不知道从哪开始的人" --duration 30
+```
+
+输出结构：
+
+```text
+outputs/ecommerce/content-jobs/YYYY-MM-DD-商品名/
+  segments/segment-01-doubao-prompt.txt
+  segments/segment-02-doubao-prompt.txt
+  segments/segment-03-doubao-prompt.txt
+  stitching-guide.md
+  publish-script.md
+  compliance-check.md
+```
+
+检查文案合规风险：
+
+```powershell
+npm run compliance:check -- --text "我亲测这本书100%有效，看完必逆袭"
+```
+
+详细说明见：
+
+```text
+docs/ecommerce-book-workflow.md
+```
 
 ## 分阶段运行
 

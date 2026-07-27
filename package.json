@@ -17,7 +17,11 @@
     "doubao:45-prompt": "node scripts/make-doubao-45-prompt.mjs",
     "doubao:selfie-bg-prompt": "node scripts/make-doubao-selfie-bg-prompt.mjs",
     "brand:model-prompt": "node scripts/make-brand-model-prompt.mjs",
-    "content:job": "node scripts/content-job.mjs"
+    "content:job": "node scripts/content-job.mjs",
+    "ecommerce:top10": "node scripts/ecommerce-top10.mjs",
+    "ecommerce:brief": "node scripts/build-ecommerce-brief.mjs",
+    "ecommerce:segments": "node scripts/ecommerce-segments.mjs",
+    "compliance:check": "node scripts/compliance-check.mjs"
   },
   "dependencies": {
     "ws": "^8.21.1"
