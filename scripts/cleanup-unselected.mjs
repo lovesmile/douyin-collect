@@ -18,37 +18,45 @@ if (!selectedIds.size && !args['allow-empty']) {
 }
 
 const entries = await readdir(outDir, { withFileTypes: true });
-const numericDirs = entries
-  .filter((entry) => entry.isDirectory() && /^\d+$/.test(entry.name))
-  .map((entry) => entry.name)
+const contentDirs = entries
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => ({ name: entry.name, id: extractAwemeId(entry.name) }))
+  .filter((entry) => entry.id)
   .sort();
 
 const removed = [];
 const kept = [];
 
-for (const id of numericDirs) {
-  if (selectedIds.has(id)) {
-    kept.push(id);
+for (const entry of contentDirs) {
+  if (selectedIds.has(entry.id)) {
+    kept.push(entry.name);
     continue;
   }
-  const target = path.join(outDir, id);
+  const target = path.join(outDir, entry.name);
   if (args['dry-run']) {
-    removed.push({ id, target, dryRun: true });
+    removed.push({ id: entry.id, name: entry.name, target, dryRun: true });
     continue;
   }
   await rm(target, { recursive: true, force: true });
-  removed.push({ id, target });
+  removed.push({ id: entry.id, name: entry.name, target });
 }
 
 console.log(JSON.stringify({
   outDir,
   selected: selectedIds.size,
-  numericDirs: numericDirs.length,
+  contentDirs: contentDirs.length,
   kept: kept.length,
   removed: removed.length,
   dryRun: Boolean(args['dry-run']),
   removedItems: removed,
 }, null, 2));
+
+function extractAwemeId(name) {
+  const text = String(name || '');
+  if (/^\d{16,22}$/.test(text)) return text;
+  const match = text.match(/(\d{16,22})$/);
+  return match ? match[1] : '';
+}
 
 function parseArgs(argv) {
   const parsed = {};

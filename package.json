@@ -8,6 +8,7 @@
     "collect:details": "node scripts/collect-details.mjs",
     "manifest": "node scripts/build-manifest.mjs",
     "cleanup:unselected": "node scripts/cleanup-unselected.mjs",
+    "ecommerce:rename-dirs": "node scripts/rename-ecommerce-dirs.mjs",
     "frames": "node scripts/extract-frames.mjs",
     "validate": "node scripts/validate-output.mjs",
     "pipeline": "node scripts/run-pipeline.mjs",

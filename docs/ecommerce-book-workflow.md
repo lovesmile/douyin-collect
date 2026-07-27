@@ -45,7 +45,22 @@ cd C:\Users\10385\Projects\wo\douyin-collect
 npm run ecommerce:top10
 ```
 
-命令名保留 `ecommerce:top10`，但默认实际只筛选 TOP5。筛选完成后会自动删除未入选的数字内容目录，避免下载的视频/音频长期占用空间。
+命令名保留 `ecommerce:top10`，但默认实际只筛选 TOP5。筛选完成后会自动删除未入选的内容目录，避免下载的视频/音频长期占用空间。
+
+入选内容目录会自动改成：
+
+```text
+书名或商品名-视频ID
+```
+
+例如：
+
+```text
+允许一切发生-7546753492188040475
+三本好书-7496368575796596004
+```
+
+这个命名只用于带货模块；穿戴甲模块仍按原来的 `{aweme_id}` 目录保存。
 
 如果临时需要 TOP10：
 
@@ -71,8 +86,11 @@ npm run ecommerce:top10 -- --keyword "育儿书推荐,童书带货,亲子阅读"
 outputs/ecommerce/daily-top10/YYYY-MM-DD
 ├─ manifest.csv
 ├─ ecommerce-content-plan.md
-├─ 入选内容的视频/图文/音频/关键帧
-└─ 入选内容的 video-info.txt / analysis.txt
+├─ 书名或商品名-视频ID/
+│  ├─ 视频/图文/音频/关键帧
+│  ├─ video-info.txt
+│  └─ analysis.txt
+└─ 其他入选内容目录
 ```
 
 ## 三、生成某个商品的 10 秒分段提示词
@@ -156,7 +174,7 @@ npm run ecommerce:top10 -- --keyword "书单推荐,好书推荐,图书带货"
 outputs/ecommerce/daily-top10/YYYY-MM-DD/ecommerce-content-plan.md
 ```
 
-默认只保留 TOP5 入选目录；未入选下载会被清理，`candidates.json`、`details.json`、`manifest.csv` 和方案文档会保留。
+默认只保留 TOP5 入选目录；未入选下载会被清理。清理脚本会识别纯数字 ID 目录，也会识别 `书名-视频ID` 目录；`candidates.json`、`details.json`、`manifest.csv` 和方案文档会保留。
 
 确定今天要带的书之后：
 

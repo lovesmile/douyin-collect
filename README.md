@@ -16,7 +16,7 @@
 3. 进入详情页补全标题、点赞、粉丝、发布时间等信息。
 4. 下载视频，或下载图文正文图片和配套音频。
 5. 按规则筛选并按点赞数降序排序。
-6. 每条内容按视频 ID 分目录，生成 `video-info.txt` 和详细 `analysis.txt`。
+6. 每条内容独立分目录，生成 `video-info.txt` 和详细 `analysis.txt`。
 7. 视频自动抽首、中、尾 3 张关键帧。
 8. 校验样本完整性。
 9. 生成穿戴甲账号运营方案。
@@ -31,7 +31,8 @@
 - 点赞数降序。
 - 图文只保留正文图：图片 URL 必须包含 `biz_tag=aweme_images`，并且页面渲染宽度大于 500 px。
 - 图文必须保存 `audio.mp3`。
-- 每条有效内容独立保存到 `{aweme_id}` 目录。
+- 穿戴甲模块：每条有效内容独立保存到 `{aweme_id}` 目录。
+- 带货模块：入选内容保存到 `{书名或商品名}-{aweme_id}` 目录，方便直接从文件夹名看出对标商品。
 
 ## 一次性完整采集
 
@@ -90,7 +91,19 @@ C:\Users\10385\Projects\wo\outputs\ecommerce
 npm run ecommerce:top10
 ```
 
-命令名保留 `ecommerce:top10`，默认实际筛选 TOP5，并在筛选后删除未入选的数字内容目录。
+命令名保留 `ecommerce:top10`，默认实际筛选 TOP5，并在筛选后删除未入选的内容目录。
+
+入选内容目录会自动重命名为：
+
+```text
+书名或商品名-视频ID
+```
+
+例如：
+
+```text
+允许一切发生-7546753492188040475
+```
 
 指定关键词：
 
@@ -199,6 +212,23 @@ outputs/collect/{run}/
     images/image-01.webp
     images/image-02.webp
     audio.mp3
+    video-info.txt
+    analysis.txt
+```
+
+带货模块的每日对标输出结构：
+
+```text
+outputs/ecommerce/daily-top10/YYYY-MM-DD/
+  candidates.json
+  details.json
+  manifest.csv
+  ecommerce-content-plan.md
+  {书名或商品名}-{aweme_id}/
+    {aweme_id}.mp4
+    frames/frame-01.jpg
+    frames/frame-02.jpg
+    frames/frame-03.jpg
     video-info.txt
     analysis.txt
 ```

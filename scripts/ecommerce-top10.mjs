@@ -42,6 +42,7 @@ if (selected < limit && fallbackDays > strictDays) {
 }
 
 await run('scripts/cleanup-unselected.mjs', ['--out', outDir]);
+await run('scripts/rename-ecommerce-dirs.mjs', ['--out', outDir]);
 await run('scripts/extract-frames.mjs', ['--out', outDir]);
 await run('scripts/validate-output.mjs', ['--out', outDir, '--expected', String(Math.min(limit, selected)), '--warn-only']);
 await run('scripts/build-ecommerce-brief.mjs', [
