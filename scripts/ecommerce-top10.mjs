@@ -5,12 +5,14 @@ import { readCsv } from '../lib/csv.mjs';
 const args = parseArgs(process.argv.slice(2));
 const date = args.date || todaySlug();
 const category = String(args.category || 'books');
-const keyword = args.keyword || defaultKeyword(category);
+const product = String(args.product || args.title || '').trim();
+const keyword = args.keyword || defaultKeyword(category, product);
 const outDir = path.resolve(args.out || args.output || path.join('..', 'outputs', 'ecommerce', 'daily-top10', date));
 const candidates = path.join(outDir, 'candidates.json');
 const limit = Number(args.limit || 5);
 const strictDays = Number(args.days || 3);
 const fallbackDays = Number(args['fallback-days'] || 30);
+const teachingExcludeTerms = args['exclude-title'] || args.excludeTitle || defaultTeachingExcludeTerms();
 
 await run('scripts/collect-search.mjs', [
   '--keyword',
@@ -54,9 +56,10 @@ await run('scripts/build-ecommerce-brief.mjs', [
   keyword,
   '--duration',
   String(args.duration || 60),
+  ...(product ? ['--product', product] : []),
 ]);
 
-console.log(JSON.stringify({ outDir, category, keyword, limit, selected, selectedWindowDays: selectedWindow }, null, 2));
+console.log(JSON.stringify({ outDir, category, product, keyword, limit, selected, selectedWindowDays: selectedWindow, excludeTitle: teachingExcludeTerms }, null, 2));
 
 async function buildManifest(days) {
   await run('scripts/build-manifest.mjs', [
@@ -70,6 +73,9 @@ async function buildManifest(days) {
     String(args['max-followers'] || 200000),
     '--days',
     String(days),
+    ...(product ? ['--include-title', product] : []),
+    '--exclude-title',
+    teachingExcludeTerms,
     ...(args.allowUnknownDate ? ['--allowUnknownDate'] : []),
   ]);
 }
@@ -79,11 +85,42 @@ async function manifestCount() {
   return rows.length;
 }
 
-function defaultKeyword(categoryName) {
+function defaultKeyword(categoryName, productName = '') {
+  if (productName) {
+    return [
+      productName,
+      `${productName} 图书带货`,
+      `${productName} 好书推荐`,
+      `${productName} 读书分享`,
+      `${productName} 书评`,
+    ].join(',');
+  }
   if (/book|书|图书|童书|教辅/.test(categoryName)) {
-    return '书单推荐,图书带货,好书推荐,童书推荐,教辅推荐,女性成长书单,自我提升书籍';
+    return '图书带货,好书推荐,童书推荐,教辅推荐,女性成长书单,自我提升书籍';
   }
   return `${categoryName}带货,${categoryName}种草,${categoryName}测评,${categoryName}推荐`;
+}
+
+function defaultTeachingExcludeTerms() {
+  return [
+    '教程',
+    '教学',
+    '教会',
+    '流程',
+    '拆解',
+    '干货',
+    '副业',
+    '自媒体',
+    '创业',
+    '书单号',
+    '读书号',
+    '卖书达人',
+    '怎么做',
+    '如何做',
+    '起号',
+    '变现',
+    '训练营',
+  ].join(',');
 }
 
 function run(script, scriptArgs) {

@@ -85,13 +85,18 @@ daily-content-plan.md
 C:\Users\10385\Projects\wo\outputs\ecommerce
 ```
 
-采集书本/书单带货对标：
+采集某本书的带货对标。正式做带货时必须指定具体书名，不采“教你做书单号/卖书达人/副业教程”这类教学内容：
 
 ```powershell
-npm run ecommerce:top10
+npm run ecommerce:top10 -- --product "允许一切发生"
 ```
 
 命令名保留 `ecommerce:top10`，默认实际筛选 TOP5，并在筛选后删除未入选的内容目录。
+
+`--product` 会同时做两件事：
+
+- 搜索围绕这本书的图书带货/好书推荐/读书分享/书评内容。
+- 入选筛选要求标题包含这本书名，并自动排除：教程、教学、流程、拆解、干货、副业、自媒体、创业、书单号、读书号、卖书达人、怎么做、起号、变现等教学类内容。
 
 入选内容目录会自动重命名为：
 
@@ -108,7 +113,7 @@ npm run ecommerce:top10
 指定关键词：
 
 ```powershell
-npm run ecommerce:top10 -- --keyword "育儿书推荐,童书带货,亲子阅读" --duration 30
+npm run ecommerce:top10 -- --product "某本具体书名" --keyword "某本具体书名 图书带货,某本具体书名 读书分享" --duration 60
 ```
 
 生成某个商品的豆包 10 秒分段视频提示词。单本书默认建议 60 秒；书单/卖书方法类建议 90 秒以上，30 秒只适合讲一个钩子和一个卖点：

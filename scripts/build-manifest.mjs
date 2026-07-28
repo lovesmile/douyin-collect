@@ -12,6 +12,8 @@ const minLikes = Number(args.minLikes || args['min-likes'] || 1000);
 const maxFollowers = Number(args.maxFollowers || args['max-followers'] || 50000);
 const days = Number(args.days || 90);
 const limit = Number(args.limit || 50);
+const includeTitle = String(args.includeTitle || args['include-title'] || args.requireTitle || args['require-title'] || '').trim();
+const excludeTitle = String(args.excludeTitle || args['exclude-title'] || '').trim();
 
 const details = await loadRows(detailsFile, outDir);
 const selected = selectRows(details)
@@ -42,7 +44,26 @@ function selectRows(rows) {
     .filter((item) => item.like_count >= minLikes)
     .filter((item) => item.follower_count === 0 || item.follower_count < maxFollowers)
     .filter((item) => withinDays(item.publish_time, days) || (args.allowUnknownDate && !isKnownDate(item.publish_time)))
+    .filter((item) => matchesInclude(item.title || ''))
+    .filter((item) => !matchesExclude(item.title || ''))
     .sort((a, b) => b.like_count - a.like_count);
+}
+
+function matchesInclude(title) {
+  if (!includeTitle) return true;
+  return splitTerms(includeTitle).some((term) => String(title || '').includes(term));
+}
+
+function matchesExclude(title) {
+  if (!excludeTitle) return false;
+  return splitTerms(excludeTitle).some((term) => String(title || '').includes(term));
+}
+
+function splitTerms(value) {
+  return String(value || '')
+    .split(/[,，|｜]/u)
+    .map((term) => term.trim())
+    .filter(Boolean);
 }
 
 function isKnownDate(value) {
