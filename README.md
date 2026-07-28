@@ -119,6 +119,12 @@ npm run ecommerce:segments -- --product "某本书名" --audience "想自我提�
 
 生成时优先提供真实书封、商品详情页截图或商品卡截图。每段画面都要保留书名/封面/书脊/商品卡截图/中文卖点便签等商品锚点，避免出现“画面好看但和书没关系”。不要让 AI 随机生成英文内页；没有真实内页素材时，用中文关键词便签替代，或让书页模糊不可读。
 
+每日带货方案会为每条入选对标生成一段可直接配音的解说词，并额外保存到对应目录：
+
+```text
+outputs/ecommerce/daily-top10/YYYY-MM-DD/{书名或商品名}-{aweme_id}/voiceover.txt
+```
+
 输出结构：
 
 ```text
@@ -233,6 +239,7 @@ outputs/ecommerce/daily-top10/YYYY-MM-DD/
     frames/frame-03.jpg
     video-info.txt
     analysis.txt
+    voiceover.txt
 ```
 
 ## 运营拆解口径
