@@ -125,6 +125,8 @@ npm run ecommerce:segments -- --product "某本书名" --audience "想自我提�
 outputs/ecommerce/daily-top10/YYYY-MM-DD/{书名或商品名}-{aweme_id}/voiceover.txt
 ```
 
+`voiceover.txt` 包含 60 秒完整版、30 秒压缩版、逐段画面对应和合规使用提醒。
+
 输出结构：
 
 ```text

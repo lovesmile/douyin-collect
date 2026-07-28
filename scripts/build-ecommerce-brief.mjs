@@ -160,39 +160,78 @@ function buildVoiceoverText(row, totalSeconds) {
   const name = inferBookName(row);
   const profile = inferBookProfile(row);
   const label = profile.isSpecificBook ? `《${name}》` : name;
-  const subject = profile.isSpecificBook ? '这本书' : '这个选题';
-  const entryLine = profile.isSpecificBook
-    ? '你可以把它当成一个解决问题的入口：先看目录，再看它有没有覆盖你现在最卡的那个问题。'
-    : '你可以把这个样本当成结构参考：先看它怎么做钩子、怎么给商品锚点、怎么把卖点讲成一个具体问题。';
-  const ctaLine = profile.isSpecificBook
-    ? '如果目录和详情确实对得上你的阶段，再点商品卡了解；如果不对，就先收藏这个选书思路，不要为了情绪冲动下单。'
-    : '正式发布前，先替换成你实际要挂车的具体书名，再按那本书的目录、商品详情和适合人群改写画面和口播。';
-  const sourceNote = profile.isSpecificBook
-    ? `这段只基于当前采集到的标题和商品方向写，不编造具体页码、作者背书或亲测经历；如果你有目录/商品详情页，可以再把卖点补得更准。`
-    : `这个样本更像“书单/卖书方法/图书带货对标”，不是单本书；正式发布时要先替换成你实际要挂车的具体书名。`;
-
-  if (totalSeconds <= 30) {
-    return [
-      `【${name}｜30秒解说词】`,
-      `如果你是${profile.audience}，可以先了解一下${label}。`,
-      `这条我不把它讲成“神书”，只讲一个点：${profile.sellingPoint}。`,
-      `${profile.scene}的时候，很多人不是缺方法，而是缺一个能让自己慢下来、重新整理问题的入口。`,
-      ctaLine,
-      '',
-      `备注：${sourceNote}`,
-    ].join('\n');
-  }
-
+  const full60 = buildVoiceover60({ name, label, profile });
+  const short30 = buildVoiceover30({ label, profile });
+  const visualPlan = buildVoiceoverVisualPlan({ label, profile });
+  const targetLabel = profile.isSpecificBook ? '具体商品' : '对标结构';
   return [
-    `【${name}｜60秒解说词】`,
-    `如果你是${profile.audience}，可以先了解一下${label}。`,
-    `我建议这条视频不要贪多，不要试图把整本书讲完，只讲一个核心点：${profile.sellingPoint}。`,
-    `很多时候，大家刷到书籍推荐会觉得“又是在卖书”，所以画面一定要先给到书名、封面或者商品卡，再配中文卖点便签，别只拍咖啡和书桌。`,
-    `${subject}更适合${profile.suitedFor}，不太适合${profile.notFor}。`,
-    entryLine,
-    ctaLine,
+    `# ${name} 解说词`,
     '',
-    `备注：${sourceNote}`,
+    `- 类型：${targetLabel}`,
+    `- 建议主版本：${totalSeconds <= 30 ? '30秒短版' : '60秒完整版'}`,
+    `- 核心人群：${profile.audience}`,
+    `- 核心卖点：${profile.sellingPoint}`,
+    `- 画面锚点：${profile.visualAnchor}`,
+    '',
+    '## 60秒完整版口播',
+    '',
+    full60,
+    '',
+    '## 30秒压缩版口播',
+    '',
+    short30,
+    '',
+    '## 逐段画面对应',
+    '',
+    visualPlan,
+    '',
+    '## 使用提醒',
+    '',
+    `- ${profile.sourceNote}`,
+    '- 口播里不要说“我亲测、我读完、用了一个月、一定有效、看完必改变”。',
+    '- 如果你拿到了真实目录/商品详情页，再把“核心卖点”和“适合人群”改得更具体；没有证据就不要编书中章节、作者背书或销量评价。',
+  ].join('\n');
+}
+
+function buildVoiceover60({ label, profile }) {
+  return [
+    '0-10s：',
+    `${profile.hook}如果你也是${profile.audience}，先别急着刷下一个，这条只讲一个很具体的问题。`,
+    '',
+    '10-20s：',
+    `${label}最适合拿来切入的点，不是“它有多神”，而是：${profile.sellingPoint}。${profile.pain}`,
+    '',
+    '20-30s：',
+    `所以画面这里一定要给到${profile.visualAnchor}，旁边放一张中文便签，写清楚“${profile.keywordCard}”。观众要一眼知道你讲的是哪本书、哪类问题，不是随便拿一本书配音。`,
+    '',
+    '30-40s：',
+    `${profile.explain}这段不要讲太满，越像朋友提醒，越不像硬广。`,
+    '',
+    '40-50s：',
+    `${profile.suitLine}如果你只是被标题情绪打动，但目录和详情对不上你的问题，就先别急着买。`,
+    '',
+    '50-60s：',
+    `${profile.cta}重点是先确认它是不是解决你现在的问题，而不是为了“好书推荐”四个字冲动下单。`,
+  ].join('\n');
+}
+
+function buildVoiceover30({ label, profile }) {
+  return [
+    `${profile.hook}如果你是${profile.audience}，可以先了解一下${label}。`,
+    `这条不讲完整内容，只讲一个点：${profile.sellingPoint}。`,
+    `画面一定给到${profile.visualAnchor}，再配一张中文便签写“${profile.keywordCard}”，让观众知道声音和商品是同一个东西。`,
+    `${profile.cta}`,
+  ].join('\n');
+}
+
+function buildVoiceoverVisualPlan({ label, profile }) {
+  return [
+    `- 0-10s：${profile.openingVisual}；字幕放“${profile.keywordCard}”。`,
+    `- 10-20s：展示${label}的商品锚点，优先真实封面/商品卡截图；不要让 AI 生成英文内页。`,
+    `- 20-30s：手写或摆放 2-3 个中文关键词：${profile.visualKeywords.join('、')}。`,
+    `- 30-40s：用便签解释核心卖点，不照读原文，不伪造章节页码。`,
+    `- 40-50s：两张便签写“适合：${profile.suitedFor}”“不适合：${profile.notFor}”。`,
+    '- 50-60s：回到商品卡/封面定帧，底部和顶部留水印安全区，做轻 CTA。',
   ].join('\n');
 }
 
@@ -206,6 +245,56 @@ function inferBookProfile(row) {
       scene: '当你想做带货但还分不清内容价值和硬广的边界',
       suitedFor: '想先学习内容结构和合规表达的新手',
       notFor: '期待照搬别人视频就能稳定出单的人',
+      hook: '很多人一听图书带货，就以为是随便找几本书、配一段鸡汤文案。其实真正难的是：你讲的内容，必须和商品卡里的书对得上。',
+      pain: '新手最容易翻车的地方，就是画面很好看，口播也顺，但观众完全不知道你到底在卖哪本书。',
+      explain: '这类样本最值得拆的不是具体话术，而是结构：先用一个真实痛点开头，再让书名或商品卡出现，最后只讲一个可以被理解的卖点。',
+      suitLine: '这个选题更适合先拿来学习内容结构、商品锚点和合规表达，不适合直接照搬成发布稿。',
+      cta: '正式发布前，先替换成你真实要挂车的书，再按那本书的目录和详情重写口播。',
+      keywordCard: '选题-商品-卖点要对上',
+      visualAnchor: '真实商品卡截图、目标书名、中文卖点便签',
+      visualKeywords: ['选题', '商品锚点', '合规表达'],
+      openingVisual: '先给商品卡截图或书名单，不要空拍书桌',
+      sourceNote: '这是图书带货方法类对标，不是具体单本书；只能学结构，发布前必须替换成真实挂车商品。',
+    };
+  }
+  if (/允许一切发生/.test(title)) {
+    return {
+      isSpecificBook: /《[^》]+》/.test(title),
+      audience: '最近焦虑、内耗、总想控制结果但又很累的人',
+      sellingPoint: '把内耗从“对抗发生”转成“先接纳已经发生的事”',
+      scene: '当你反复后悔一个选择、反复比较价格、反复猜别人态度时',
+      suitedFor: '想慢慢理清情绪、减少反复拉扯的人',
+      notFor: '只想看一句鸡血口号、立刻改变人生的人',
+      hook: '买完东西还要反复比价，做完选择又开始后悔，关系散了还忍不住复盘，这种消耗其实很常见。',
+      pain: '它戳中的不是“我要变得多厉害”，而是很多人每天都在经历的那种拉扯：事情已经发生了，心里却一直不肯放过自己。',
+      explain: '这本书适合切成一个温柔但具体的角度：不是劝你什么都无所谓，而是先停止和已经发生的事情硬碰硬。',
+      suitLine: '这本书更适合情绪敏感、容易后悔、容易把小事想很久的人。',
+      cta: '如果你最近正处在这种状态，可以先点商品卡看目录和详情，确认它是不是你需要的表达方式。',
+      keywordCard: '允许发生，不等于放弃选择',
+      visualAnchor: '《允许一切发生》的真实封面、商品卡截图或书名便签',
+      visualKeywords: ['接纳', '内耗', '选择'],
+      openingVisual: '封面或商品卡先入镜，旁边放“越想控制越累？”的中文便签',
+      sourceNote: '这段依据采集标题和情绪方向生成；如果有真实目录/详情页，可继续补充具体章节卖点，但不要编造亲测经历。',
+    };
+  }
+  if (/妈妈|当妈|孩子|育儿|童书|亲子|教辅|成绩|学习/.test(title)) {
+    return {
+      isSpecificBook: /《[^》]+》/.test(title),
+      audience: '想给孩子选书、做亲子阅读，或者在家庭和自我之间找回一点秩序的人',
+      sellingPoint: '先按年龄段、使用场景和具体问题选书，而不是被“必读书单”带着买',
+      scene: '当你一边照顾孩子，一边又觉得自己的时间和状态被掏空时',
+      suitedFor: '愿意先看目录、年龄段和使用方式的家长',
+      notFor: '期待一本书立刻改变孩子成绩或习惯的人',
+      hook: '当妈以后，很多人的时间都给了孩子和家庭，但自己的心里反而越来越空。',
+      pain: '这类书单真正能打动人的，不是“十本都要买”，而是它把一个很隐秘的状态说出来了：你也需要被照顾，也需要重新整理自己。',
+      explain: '所以这条视频不要像清单报菜名，要只挑一个场景讲：深夜哄睡以后，为什么你会刷手机越刷越空。',
+      suitLine: '这个方向更适合想慢慢恢复阅读节奏、重新照顾自己的人。',
+      cta: '如果你准备挂具体书，先把其中一本拿出来讲清楚目录和适合场景，再引导点商品卡。',
+      keywordCard: '不是买一堆书，是先找回自己',
+      visualAnchor: '真实书单截图、具体书封、商品卡截图或中文书名便签',
+      visualKeywords: ['当妈后', '内耗', '重新开始'],
+      openingVisual: '夜晚书桌、台灯、书封或商品卡同框，便签写“当妈后，心里那片地荒了？”',
+      sourceNote: '这是由书单标题和妈妈场景推导的口播，发布时应选择具体挂车书名，不要泛泛挂一堆无关商品。',
     };
   }
   if (/三本|3本|十本|10本|书单|好书|不得不看|脱胎换骨/.test(title)) {
@@ -216,26 +305,36 @@ function inferBookProfile(row) {
       scene: '当你收藏了很多书单却一直不知道先看哪一本',
       suitedFor: '想先建立选书标准的人',
       notFor: '想一次买一堆但没有阅读计划的人',
+      hook: '看到“这几本书让我脱胎换骨”，很多人第一反应是收藏，但收藏完往往还是不知道先看哪一本。',
+      pain: '书单内容最容易空，是因为它只告诉你“这些书好”，却没有告诉你“哪一本适合现在的你”。',
+      explain: '所以复刻这类选题时，不要一上来堆很多书名，先给一个筛选标准：你现在要解决的是情绪、表达、学习，还是行动力。',
+      suitLine: '这个选题更适合想建立选书标准的人。',
+      cta: '正式挂车时，建议只选其中一本重点讲清楚，再让观众点商品卡看目录。',
+      keywordCard: '先选问题，再选书',
+      visualAnchor: '书单封面、3本书同框、商品卡截图或中文筛选便签',
+      visualKeywords: ['适合谁', '解决什么', '先看哪本'],
+      openingVisual: '三本书或书单截图同框，便签写“别一口气全买”',
+      sourceNote: '这是书单类样本，适合拆结构；如果要发布带货，请把口播聚焦到实际挂车的一本书。',
     };
   }
-  if (/允许一切发生|内耗|拧巴|焦虑|情绪|接纳|人生|选择/.test(title)) {
+  if (/内耗|拧巴|焦虑|情绪|接纳|人生|选择/.test(title)) {
     return {
       isSpecificBook: /《[^》]+》/.test(title),
-      audience: '最近焦虑、内耗、想让自己慢下来的人',
-      sellingPoint: '帮你把内耗从对抗变成接纳',
-      scene: '当你越想控制越累、越比较越后悔',
-      suitedFor: '想慢慢理清情绪和选择的人',
-      notFor: '只想立刻被鸡血打满、马上看到结果的人',
-    };
-  }
-  if (/妈妈|当妈|孩子|育儿|童书|亲子|教辅|成绩|学习/.test(title)) {
-    return {
-      isSpecificBook: /《[^》]+》/.test(title),
-      audience: '想给孩子选书、做亲子阅读或解决学习陪伴问题的人',
-      sellingPoint: '帮你判断这类书是否适合当前年龄段和具体学习场景',
-      scene: '当你不知道该买故事书、教辅还是习惯养成书',
-      suitedFor: '愿意先看目录、年龄段和使用场景的家长',
-      notFor: '期待一本书立刻改变成绩或习惯的人',
+      audience: '最近焦虑、内耗、总想控制结果但又很累的人',
+      sellingPoint: '把内耗从“反复对抗”转成“先看清自己真正卡在哪里”',
+      scene: '当你反复后悔一个选择、关系结束后还在复盘，或者越想控制越累时',
+      suitedFor: '想慢慢理清情绪、减少反复拉扯的人',
+      notFor: '只想看一句鸡血口号、立刻改变人生的人',
+      hook: '有些人不是不努力，是太容易把一件已经发生的事，在脑子里反复重演。',
+      pain: '这类内容能打动人，是因为它不是在卖成功学，而是在替观众说出那种说不清的累。',
+      explain: '复刻时不要把话说成玄学，也不要承诺改变人生，只需要把一个小情绪讲具体。',
+      suitLine: '这个方向更适合情绪敏感、容易后悔、容易把小事想很久的人。',
+      cta: '正式发布时，先替换成具体挂车书名，再点出它和这个情绪问题的关系。',
+      keywordCard: '先看清卡点，再选书',
+      visualAnchor: '具体书封、商品卡截图或中文情绪关键词便签',
+      visualKeywords: ['内耗', '接纳', '选择'],
+      openingVisual: '真实书封/商品卡截图先入镜，便签写“为什么总是放不过自己？”',
+      sourceNote: '这是情绪成长类方向推导稿；发布时必须落到具体书名和商品详情，不要泛泛挂车。',
     };
   }
   return {
@@ -245,6 +344,16 @@ function inferBookProfile(row) {
     scene: '当你被标题种草但还不确定是否真的需要',
     suitedFor: '愿意先看目录、详情和适合人群的人',
     notFor: '只看情绪标题就冲动下单的人',
+    hook: '很多书籍视频的问题不是不漂亮，而是你听完仍然不知道它到底解决什么问题。',
+    pain: '如果画面只有书桌、咖啡和翻书，观众会觉得像氛围素材，商品记不住，也不敢点。',
+    explain: '所以这条内容要先把问题讲窄，再让商品出现，最后只给一个购买理由。',
+    suitLine: '这个方向更适合想先理清需求的人。',
+    cta: '可以先点商品卡看目录和详情，确认适合再下单。',
+    keywordCard: '先看问题，再看目录',
+    visualAnchor: '真实书封、商品卡截图或中文卖点便签',
+    visualKeywords: ['问题', '目录', '适合谁'],
+    openingVisual: '真实书封/商品卡截图先入镜，旁边放中文问题便签',
+    sourceNote: '这是按标题方向生成的通用书籍带货稿；拿到商品详情后应继续细化。',
   };
 }
 
