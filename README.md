@@ -131,7 +131,7 @@ npm run ecommerce:segments -- --product "某本书名" --audience "想先建立�
 outputs/ecommerce/daily-top10/YYYY-MM-DD/{书名或商品名}-{aweme_id}/voiceover.txt
 ```
 
-`voiceover.txt` 包含推荐主版本、60 秒完整版、30 秒压缩版、逐段画面对应和合规使用提醒；书单/方法类会额外生成 90 秒长版口播。
+`voiceover.txt` 包含推荐主版本、60 秒完整版、30 秒压缩版、逐段画面对应和合规使用提醒；书单/方法类会额外生成 90 秒长版口播。口播区只放可直接配音的书本/选书讲解，不再混入“怎么拍、怎么生成 AI 画面”的制作说明。
 
 输出结构：
 
