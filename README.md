@@ -111,10 +111,16 @@ npm run ecommerce:top10
 npm run ecommerce:top10 -- --keyword "育儿书推荐,童书带货,亲子阅读" --duration 30
 ```
 
-生成某个商品的豆包 10 秒分段视频提示词。书籍带货默认建议 60 秒；30 秒只适合讲一个钩子和一个卖点：
+生成某个商品的豆包 10 秒分段视频提示词。单本书默认建议 60 秒；书单/卖书方法类建议 90 秒以上，30 秒只适合讲一个钩子和一个卖点：
 
 ```powershell
 npm run ecommerce:segments -- --product "某本书名" --audience "想自我提升但不知道从哪开始的人" --duration 60 --sellingPoint "只讲一个具体卖点"
+```
+
+书单类建议这样生成：
+
+```powershell
+npm run ecommerce:segments -- --product "某本书名" --audience "想先建立选书标准的人" --duration 90 --sellingPoint "先按问题选书，而不是看到书单就全买"
 ```
 
 生成时优先提供真实书封、商品详情页截图或商品卡截图。每段画面都要保留书名/封面/书脊/商品卡截图/中文卖点便签等商品锚点，避免出现“画面好看但和书没关系”。不要让 AI 随机生成英文内页；没有真实内页素材时，用中文关键词便签替代，或让书页模糊不可读。
@@ -125,7 +131,7 @@ npm run ecommerce:segments -- --product "某本书名" --audience "想自我提�
 outputs/ecommerce/daily-top10/YYYY-MM-DD/{书名或商品名}-{aweme_id}/voiceover.txt
 ```
 
-`voiceover.txt` 包含 60 秒完整版、30 秒压缩版、逐段画面对应和合规使用提醒。
+`voiceover.txt` 包含推荐主版本、60 秒完整版、30 秒压缩版、逐段画面对应和合规使用提醒；书单/方法类会额外生成 90 秒长版口播。
 
 输出结构：
 

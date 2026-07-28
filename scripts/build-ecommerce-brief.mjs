@@ -33,7 +33,7 @@ function buildPlan(items) {
     '- 不做搬运，不复刻原视频；只拆结构、钩子、卖点表达和镜头节奏，再生成原创达人带货方案。',
     '- 如果你没有购买实物，不要说“我亲测、我读完、我用了一个月”。可以说“这本书主打……”“从目录/卖点看更适合……”“如果你正在解决这个问题，可以先了解这本”。',
     '- 书籍带货不能只做氛围画面：每段都必须有书名/封面/书脊/商品卡截图/中文卖点便签等商品锚点，否则会出现音画不匹配、货不对板。',
-    '- 30 秒只适合讲一个钩子和一个卖点；想讲清“这本书适合谁、解决什么问题、为什么值得看”，默认建议 60 秒。',
+    '- 30 秒只适合讲一个钩子和一个卖点；单本书默认建议 60 秒；书单/卖书方法类默认建议 90 秒以上，最好拆成系列。',
     '',
     '## 今日采集参数',
     '',
@@ -52,8 +52,9 @@ function buildPlan(items) {
     '- 前 3 秒：痛点钩子，不要先讲品牌和废话。',
     '- 3-10 秒：商品锚点必须出现，展示书名、封面、书脊、商品卡截图或中文问题便签。',
     '- 10-30 秒：只讲一个核心问题和一个卖点，不要泛泛讲完整书籍内容。',
-    '- 30-50 秒：如果做 60 秒，再增加适合/不适合人群、1 个观点拆解、1 个使用场景。',
-    '- 50-60 秒：给轻行动引导，但不要虚假限时、虚假低价、虚假库存。',
+    '- 30-50 秒：单本书补适合/不适合人群、1 个观点拆解、1 个使用场景。',
+    '- 50-60 秒：单本书给轻行动引导，但不要虚假限时、虚假低价、虚假库存。',
+    '- 60-90 秒：书单/方法类才展开：讲选书标准、为什么不要一次买一堆、最后落到实际挂车的 1 本书。',
     '- 禁止 AI 随机生成英文内页、英文书名、外文段落或与目标商品无关的书；没有真实内页素材时，用中文目录便签/关键词卡替代，或让书页模糊不可读。',
     '',
     '## 今日可做选题',
@@ -158,20 +159,33 @@ function buildVoiceoverBlocks(items) {
 
 function buildVoiceoverText(row, totalSeconds) {
   const name = inferBookName(row);
-  const profile = inferBookProfile(row);
+  const profile = {
+    recommendedSeconds: 60,
+    durationReason: '单本书可以用 60 秒讲清一个人群、一个问题和一个购买理由；不要试图讲完整本书。',
+    ...inferBookProfile(row),
+  };
   const label = profile.isSpecificBook ? `《${name}》` : name;
   const full60 = buildVoiceover60({ name, label, profile });
+  const long90 = profile.recommendedSeconds >= 90 ? buildVoiceover90({ label, profile }) : '';
   const short30 = buildVoiceover30({ label, profile });
   const visualPlan = buildVoiceoverVisualPlan({ label, profile });
   const targetLabel = profile.isSpecificBook ? '具体商品' : '对标结构';
+  const mainVersion = totalSeconds <= 30 ? '30秒短版' : `${profile.recommendedSeconds || 60}秒推荐版`;
   return [
     `# ${name} 解说词`,
     '',
     `- 类型：${targetLabel}`,
-    `- 建议主版本：${totalSeconds <= 30 ? '30秒短版' : '60秒完整版'}`,
+    `- 建议主版本：${mainVersion}`,
     `- 核心人群：${profile.audience}`,
     `- 核心卖点：${profile.sellingPoint}`,
     `- 画面锚点：${profile.visualAnchor}`,
+    `- 时长判断：${profile.durationReason}`,
+    ...(long90 ? [
+      '',
+      '## 90秒长版口播（书单/方法类推荐）',
+      '',
+      long90,
+    ] : []),
     '',
     '## 60秒完整版口播',
     '',
@@ -190,6 +204,37 @@ function buildVoiceoverText(row, totalSeconds) {
     `- ${profile.sourceNote}`,
     '- 口播里不要说“我亲测、我读完、用了一个月、一定有效、看完必改变”。',
     '- 如果你拿到了真实目录/商品详情页，再把“核心卖点”和“适合人群”改得更具体；没有证据就不要编书中章节、作者背书或销量评价。',
+  ].join('\n');
+}
+
+function buildVoiceover90({ label, profile }) {
+  return [
+    '0-10s：',
+    `${profile.hook}如果你也是${profile.audience}，先别急着收藏一堆，这条先把选择逻辑讲明白。`,
+    '',
+    '10-20s：',
+    `${label}这个方向不能只用一句“好书推荐”带过。真正影响转化的，是观众能不能马上判断：这是不是解决我现在问题的书。`,
+    '',
+    '20-30s：',
+    `所以开头画面必须给到${profile.visualAnchor}，同时用中文便签写清“${profile.keywordCard}”。不要空拍书桌，也不要让 AI 随机生成英文内页。`,
+    '',
+    '30-40s：',
+    `${profile.explain}这里不要一次讲很多本，先讲一个筛选标准，让观众知道你不是在随便堆书名。`,
+    '',
+    '40-50s：',
+    `第一个标准：先看自己现在的问题。是情绪、亲子、学习、表达，还是行动力？问题不同，应该点开的书也不同。`,
+    '',
+    '50-60s：',
+    `第二个标准：看目录和商品详情有没有对应你的场景。只被标题打动，但目录对不上，就先别急着下单。`,
+    '',
+    '60-70s：',
+    `${profile.suitLine}这一步是降低硬广感的关键：适合谁讲清楚，不适合谁也要讲清楚。`,
+    '',
+    '70-80s：',
+    `${profile.longScene || '如果你要复刻这类内容，最好把书单拆成系列：一条视频只讲一个问题、一类人群或者一本重点书。'} `,
+    '',
+    '80-90s：',
+    `${profile.cta}如果你决定挂车，最后一定回到具体书名、商品卡和目录，不要让观众听完还不知道你推荐的到底是哪一本。`,
   ].join('\n');
 }
 
@@ -225,14 +270,20 @@ function buildVoiceover30({ label, profile }) {
 }
 
 function buildVoiceoverVisualPlan({ label, profile }) {
-  return [
+  const lines = [
     `- 0-10s：${profile.openingVisual}；字幕放“${profile.keywordCard}”。`,
     `- 10-20s：展示${label}的商品锚点，优先真实封面/商品卡截图；不要让 AI 生成英文内页。`,
     `- 20-30s：手写或摆放 2-3 个中文关键词：${profile.visualKeywords.join('、')}。`,
     `- 30-40s：用便签解释核心卖点，不照读原文，不伪造章节页码。`,
     `- 40-50s：两张便签写“适合：${profile.suitedFor}”“不适合：${profile.notFor}”。`,
     '- 50-60s：回到商品卡/封面定帧，底部和顶部留水印安全区，做轻 CTA。',
-  ].join('\n');
+  ];
+  if (profile.recommendedSeconds >= 90) {
+    lines.push('- 60-70s：补一张“选书标准”便签，只讲一个标准，不要罗列十本。');
+    lines.push('- 70-80s：展示实际准备挂车的 1 本书或商品卡，告诉观众为什么先从它开始。');
+    lines.push('- 80-90s：回到商品卡/封面/目录截图，收束为“先看目录，再决定”。');
+  }
+  return lines.join('\n');
 }
 
 function inferBookProfile(row) {
@@ -254,6 +305,9 @@ function inferBookProfile(row) {
       visualAnchor: '真实商品卡截图、目标书名、中文卖点便签',
       visualKeywords: ['选题', '商品锚点', '合规表达'],
       openingVisual: '先给商品卡截图或书名单，不要空拍书桌',
+      recommendedSeconds: 90,
+      durationReason: '方法类不是卖单本书，60 秒只能讲概念；90 秒才够讲清选题、商品锚点、合规表达和替换成真实挂车书的动作。',
+      longScene: '这类视频最适合做成系列：第一条讲选题和商品怎么对上，第二条讲具体书的目录，第三条讲画面和口播怎么同步。',
       sourceNote: '这是图书带货方法类对标，不是具体单本书；只能学结构，发布前必须替换成真实挂车商品。',
     };
   }
@@ -274,6 +328,8 @@ function inferBookProfile(row) {
       visualAnchor: '《允许一切发生》的真实封面、商品卡截图或书名便签',
       visualKeywords: ['接纳', '内耗', '选择'],
       openingVisual: '封面或商品卡先入镜，旁边放“越想控制越累？”的中文便签',
+      recommendedSeconds: 60,
+      durationReason: '这是单本情绪成长书，60 秒只讲一个核心情绪卖点刚好；如果扩到更长，需要真实目录或商品详情支撑。',
       sourceNote: '这段依据采集标题和情绪方向生成；如果有真实目录/详情页，可继续补充具体章节卖点，但不要编造亲测经历。',
     };
   }
@@ -294,6 +350,9 @@ function inferBookProfile(row) {
       visualAnchor: '真实书单截图、具体书封、商品卡截图或中文书名便签',
       visualKeywords: ['当妈后', '内耗', '重新开始'],
       openingVisual: '夜晚书桌、台灯、书封或商品卡同框，便签写“当妈后，心里那片地荒了？”',
+      recommendedSeconds: 90,
+      durationReason: '妈妈/书单场景需要先共情、再讲选书标准、最后落到具体一本；60 秒容易只剩情绪，讲不清商品。',
+      longScene: '如果是妈妈成长书单，建议一条视频只选一个场景：深夜哄睡后、通勤路上、孩子写作业旁边，而不是十本一起报菜名。',
       sourceNote: '这是由书单标题和妈妈场景推导的口播，发布时应选择具体挂车书名，不要泛泛挂一堆无关商品。',
     };
   }
@@ -314,6 +373,9 @@ function inferBookProfile(row) {
       visualAnchor: '书单封面、3本书同框、商品卡截图或中文筛选便签',
       visualKeywords: ['适合谁', '解决什么', '先看哪本'],
       openingVisual: '三本书或书单截图同框，便签写“别一口气全买”',
+      recommendedSeconds: 90,
+      durationReason: '书单类至少 90 秒：前 30 秒讲为什么不要乱买，中间 30 秒讲筛选标准，最后 30 秒落到实际挂车的一本书。',
+      longScene: '书单最好拆成系列：第一条讲选书标准，第二条讲其中一本适合谁，第三条讲不适合谁和替代选择。',
       sourceNote: '这是书单类样本，适合拆结构；如果要发布带货，请把口播聚焦到实际挂车的一本书。',
     };
   }
@@ -334,6 +396,8 @@ function inferBookProfile(row) {
       visualAnchor: '具体书封、商品卡截图或中文情绪关键词便签',
       visualKeywords: ['内耗', '接纳', '选择'],
       openingVisual: '真实书封/商品卡截图先入镜，便签写“为什么总是放不过自己？”',
+      recommendedSeconds: 60,
+      durationReason: '泛情绪成长方向如果没有具体书名，最多先做 60 秒种草结构；正式发布要落到具体商品。',
       sourceNote: '这是情绪成长类方向推导稿；发布时必须落到具体书名和商品详情，不要泛泛挂车。',
     };
   }
